@@ -13,6 +13,25 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + "/uploaded"));
 app.use(UserRoute)
 
+const allowedOrigins = ["http://localhost:3000", "https://dungpos.netlify.app/"];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow requests with no origin
+      // (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg =
+          "The CORS policy for this site does not " +
+          "allow access from the specified Origin.";
+          return res.json({ status: "error", msg });
+      }
+      return callback(null, true);
+    },
+  })
+)
+
 app.get("/", function(req, res, next) {
   return res.send("Hello Nodejs");
 });
